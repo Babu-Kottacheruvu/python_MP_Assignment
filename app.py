@@ -28,7 +28,7 @@ CREATE TABLE IF NOT EXISTS proposals (
 
 @app.route('/')
 def form():
-    return render_template('form.html')
+    return render_template('index.html')
 
 @app.route('/submit', methods=['POST'])
 def submit():
@@ -61,6 +61,26 @@ def submit():
 def thank_you():
     proposer_name = request.args.get('proposer_name', 'Someone Special')
     return render_template('thankyou.html', proposer_name=proposer_name)
+
+
+@app.route('/view', methods=['GET', 'POST'])
+def view_proposal():
+    if request.method == 'POST':
+        proposal_id = request.form.get('proposal_id')
+        if not proposal_id.isdigit():
+            return "Invalid ID", 400
+
+        cursor.execute("SELECT proposer_name, proposee_name, message, photo_path FROM proposals WHERE id = %s", (proposal_id,))
+        result = cursor.fetchone()
+
+        if result:
+            proposer_name, proposee_name, message, photo_path = result
+            return render_template('view.html', id=proposal_id, proposer=proposer_name,
+                                   proposee=proposee_name, message=message, photo=photo_path)
+        else:
+            return f"No proposal found with ID {proposal_id}", 404
+    return render_template('view_form.html')
+
 
 if __name__ == '__main__':
     os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)

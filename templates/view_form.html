@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>View Proposal</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background: #f3e5f5;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    form {
+      background: white;
+      padding: 25px;
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    }
+    input, button {
+      padding: 10px;
+      margin-top: 10px;
+      width: 100%;
+      border-radius: 8px;
+      font-size: 16px;
+    }
+    button {
+      background-color: #ab47bc;
+      color: white;
+      border: none;
+    }
+  </style>
+</head>
+<body>
+  <form method="POST" action="/view">
+    <h2>🔍 View Proposal by ID</h2>
+    <input type="text" name="proposal_id" placeholder="Enter Proposal ID" required>
+    <button type="submit">View</button>
+  </form>
+</body>
+</html>
