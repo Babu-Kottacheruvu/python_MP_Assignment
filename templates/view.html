@@ -35,10 +35,12 @@
     <p><strong>To:</strong> {{ proposee }}</p>
     <p><strong>Message:</strong><br>{{ message }}</p>
     {% if photo %}
-      <img src="{{ url_for('static', filename='uploads/' + photo.split('/')[-1]) }}" alt="Uploaded Photo">
+    <img src="{{ url_for('static', filename='uploads/' + photo|replace('static/uploads/', '')) }}" alt="Uploaded Photo">
+
     {% else %}
-      <p><em>No photo uploaded.</em></p>
+    <p>No photo uploaded.</p>
     {% endif %}
+
   </div>
 </body>
 </html>

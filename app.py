@@ -27,8 +27,12 @@ CREATE TABLE IF NOT EXISTS proposals (
 """)
 
 @app.route('/')
-def form():
+def home():
     return render_template('index.html')
+
+@app.route('/form')
+def form():
+    return render_template('form.html')
 
 @app.route('/submit', methods=['POST'])
 def submit():

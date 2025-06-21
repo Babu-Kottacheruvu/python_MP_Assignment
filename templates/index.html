@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Forever Begins | Marriage Proposal</title>
+  <title>Forever Begins</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display&family=Roboto&display=swap" rel="stylesheet">
 
   <style>
@@ -170,8 +170,8 @@ footer {
   <div class="hamburger" onclick="toggleMenu()">☰</div>
   <ul class="nav-links" id="navLinks">
     <li><a href="#">Home</a></li>
-    <li><a href="#">See Proposals</a></li>
-    <li><a href="/templates/form.html">Propose</a></li>
+    <li><a href="{{url_for('view_proposal')}}">See Proposals</a></li>
+    <li><a href="{{ url_for('form') }}">Propose</a></li>
     <li><a href="#contact">Contact</a></li>
   </ul>
 </nav>
@@ -181,7 +181,7 @@ footer {
     <div class="hero-content">
       <h1>Will You Marry Me?</h1>
       <p>Start your forever journey with a beautiful proposal. Share your love story with the world.</p>
-      <a href="/templates/form.html" class="cta-button">Create Your Proposal</a>
+      <a href="{{ url_for('form') }}"class="cta-button">Create Your Proposal</a>
     </div>
   </section>
 
