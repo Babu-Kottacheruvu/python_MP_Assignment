@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Marriage Proposal 💍</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to right, #f3e5f5, #e1bee7);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    form {
+      background: white;
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      width: 420px;
+    }
+    h2 {
+      text-align: center;
+      color: #7b1fa2;
+    }
+    label {
+      margin-top: 15px;
+      display: block;
+      font-weight: 600;
+      color: #555;
+    }
+    input, textarea {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      font-size: 15px;
+    }
+    input[type="file"] {
+      padding: 8px;
+    }
+    button {
+      margin-top: 20px;
+      width: 100%;
+      padding: 12px;
+      background-color: #ab47bc;
+      color: white;
+      border: none;
+      font-size: 16px;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #8e24aa;
+    }
+  </style>
+</head>
+<body>
+
+  <form action="/submit" method="POST" enctype="multipart/form-data" onsubmit="return validateForm()">
+    <h2>💍 Will You Marry Me?</h2>
+
+    <label for="proposerName">Your Name *</label>
+    <input type="text" id="proposerName" name="proposerName" required>
+
+    <label for="proposeeName">Their Name *</label>
+    <input type="text" id="proposeeName" name="proposeeName" required>
+
+    <label for="message">Your Proposal *</label>
+    <textarea id="message" name="message" rows="5" placeholder="Write your heartfelt message..." required></textarea>
+
+    <label for="photo">Upload a Special Photo</label>
+    <input type="file" id="photo" name="photo" accept="image/*">
+
+    <button type="submit">Send Proposal 💌</button>
+  </form>
+
+  <script>
+    function validateForm() {
+      const proposer = document.getElementById('proposerName').value.trim();
+      const proposee = document.getElementById('proposeeName').value.trim();
+      const msg = document.getElementById('message').value.trim();
+      if (!proposer || !proposee || !msg) {
+        alert("Please fill in all required fields!");
+        return false;
+      }
+      return true;
+    }
+  </script>
+
+</body>
+</html>

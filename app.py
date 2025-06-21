@@ -1,0 +1,67 @@
+from flask import Flask, render_template, request, redirect, url_for
+import mysql.connector
+import os
+from werkzeug.utils import secure_filename
+
+app = Flask(__name__)
+app.config['UPLOAD_FOLDER'] = 'static/uploads'
+
+# MySQL connection
+db = mysql.connector.connect(
+    host="localhost",
+    user="root",
+    password="KBABU0307",
+    database="marriage_proposal"
+)
+cursor = db.cursor()
+
+# Create proposals table if not exists
+cursor.execute("""
+CREATE TABLE IF NOT EXISTS proposals (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    proposer_name VARCHAR(100),
+    proposee_name VARCHAR(100),
+    message TEXT,
+    photo_path VARCHAR(255)
+)
+""")
+
+@app.route('/')
+def form():
+    return render_template('form.html')
+
+@app.route('/submit', methods=['POST'])
+def submit():
+    proposer_name = request.form.get('proposerName')
+    proposee_name = request.form.get('proposeeName')
+    message = request.form.get('message')
+    photo = request.files.get('photo')
+
+    if not proposer_name or not proposee_name or not message:
+        return "Please fill in all required fields!", 400
+
+    # Handle photo upload
+    photo_filename = ''
+    if photo and photo.filename != '':
+        photo_filename = secure_filename(photo.filename)
+        photo_path = os.path.join(app.config['UPLOAD_FOLDER'], photo_filename)
+        photo.save(photo_path)
+    else:
+        photo_path = None
+
+    # Insert into database
+    query = "INSERT INTO proposals (proposer_name, proposee_name, message, photo_path) VALUES (%s, %s, %s, %s)"
+    values = (proposer_name, proposee_name, message, photo_path)
+    cursor.execute(query, values)
+    db.commit()
+
+    return redirect(url_for('thank_you', proposer_name=proposer_name))
+
+@app.route('/thank-you')
+def thank_you():
+    proposer_name = request.args.get('proposer_name', 'Someone Special')
+    return render_template('thankyou.html', proposer_name=proposer_name)
+
+if __name__ == '__main__':
+    os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+    app.run(debug=True)
