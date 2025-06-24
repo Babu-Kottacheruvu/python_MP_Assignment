@@ -22,25 +22,43 @@
       max-width: 100%;
       border-radius: 12px;
       margin-top: 15px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
     }
     h2 {
       color: #7b1fa2;
+    }
+    .debug-info {
+      background: #f0f0f0;
+      padding: 10px;
+      border-radius: 5px;
+      margin: 10px 0;
+      font-size: 12px;
+      color: #666;
     }
   </style>
 </head>
 <body>
   <div class="card">
-    <h2>Proposal #{{ id }}</h2>
+    <h2>💕 Proposal #{{ id }} 💕</h2>
     <p><strong>From:</strong> {{ proposer }}</p>
     <p><strong>To:</strong> {{ proposee }}</p>
     <p><strong>Message:</strong><br>{{ message }}</p>
+    
+    <!-- Debug info - remove this after testing -->
+    <div class="debug-info">
+      <strong>Debug - Photo path from DB:</strong> {{ photo if photo else 'None' }}
+    </div>
+    
     {% if photo %}
-    <img src="{{ url_for('static', filename='uploads/' + photo|replace('static/uploads/', '')) }}" alt="Uploaded Photo">
-
+        <div>
+            <img src="{{ url_for('static', filename=photo) }}" alt="Proposal Photo" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+            <p style="display:none; color:red;">❌ Image failed to load. Check if file exists at: static/{{ photo }}</p>
+        </div>
     {% else %}
-    <p>No photo uploaded.</p>
+        <p><em>No photo attached to this proposal</em></p>
     {% endif %}
 
+    <p><a href="{{ url_for('view_proposal') }}">← View Another Proposal</a></p>
   </div>
 </body>
 </html>

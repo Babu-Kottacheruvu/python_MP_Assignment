@@ -44,14 +44,15 @@ def submit():
     if not proposer_name or not proposee_name or not message:
         return "Please fill in all required fields!", 400
 
-    # Handle photo upload
-    photo_filename = ''
+    # Handle photo upload - FIXED VERSION
+    photo_path = None
     if photo and photo.filename != '':
         photo_filename = secure_filename(photo.filename)
-        photo_path = os.path.join(app.config['UPLOAD_FOLDER'], photo_filename)
-        photo.save(photo_path)
-    else:
-        photo_path = None
+        # Save file to disk
+        full_path = os.path.join(app.config['UPLOAD_FOLDER'], photo_filename)
+        photo.save(full_path)
+        # Store only the relative path for the database (uploads/filename.jpg)
+        photo_path = f"uploads/{photo_filename}"
 
     # Insert into database
     query = "INSERT INTO proposals (proposer_name, proposee_name, message, photo_path) VALUES (%s, %s, %s, %s)"
@@ -65,7 +66,6 @@ def submit():
 def thank_you():
     proposer_name = request.args.get('proposer_name', 'Someone Special')
     return render_template('thankyou.html', proposer_name=proposer_name)
-
 
 @app.route('/view', methods=['GET', 'POST'])
 def view_proposal():
@@ -84,7 +84,6 @@ def view_proposal():
         else:
             return f"No proposal found with ID {proposal_id}", 404
     return render_template('view_form.html')
-
 
 if __name__ == '__main__':
     os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
