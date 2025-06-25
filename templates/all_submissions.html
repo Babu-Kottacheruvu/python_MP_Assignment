@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>All Proposals</title>
+  <style>
+    table {
+      width: 90%;
+      margin: 2rem auto;
+      border-collapse: collapse;
+    }
+    th, td {
+      padding: 0.75rem;
+      border: 1px solid #ddd;
+      text-align: left;
+    }
+    th {
+      background-color: #f8f9fa;
+    }
+    img {
+      max-width: 120px;
+      border-radius: 8px;
+    }
+  </style>
+</head>
+<body>
+  <h2 style="text-align:center;">All Marriage Proposals 💞</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Proposer</th>
+        <th>Proposee</th>
+        <th>Message</th>
+        <th>Photo</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for id, proposer, proposee, message, photo in proposals %}
+      <tr>
+        <td>{{ id }}</td>
+        <td>{{ proposer }}</td>
+        <td>{{ proposee }}</td>
+        <td>{{ message }}</td>
+        <td>
+          <!-- {% if photo %}
+            <img src="{{ url_for('static', filename=photo.replace('static/', '')) }}" alt="Photo">
+          {% else %}
+            No Photo
+          {% endif %} -->
+          <img src="{{ photo }}" alt="">
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</body>
+</html>

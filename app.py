@@ -85,6 +85,14 @@ def view_proposal():
             return f"No proposal found with ID {proposal_id}", 404
     return render_template('view_form.html')
 
+
+@app.route('/submissions')
+def all_submissions():
+    cursor.execute("SELECT * FROM proposals")
+    proposals = cursor.fetchall()
+    return render_template('all_submissions.html', proposals=proposals)
+
+
 if __name__ == '__main__':
     os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
     app.run(debug=True)
