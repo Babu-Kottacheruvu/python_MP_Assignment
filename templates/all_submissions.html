@@ -21,10 +21,19 @@
       max-width: 120px;
       border-radius: 8px;
     }
+    .navsec{
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 2em;
+    }
   </style>
 </head>
 <body>
-  <h2 style="text-align:center;">All Marriage Proposals 💞</h2>
+    <div class="navsec">
+        <h2 style="text-align:center;">All Marriage Proposals 💞</h2>
+        <p><a href="{{url_for('home')}}"> ← Back To Home </a></p>
+    </div>
   <table>
     <thead>
       <tr>
