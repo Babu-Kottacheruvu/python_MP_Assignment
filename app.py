@@ -37,6 +37,33 @@ def form():
 
 @app.route('/submit', methods=['POST'])
 def submit():
+    try:
+        proposer_name = request.form.get('proposerName')
+        proposee_name = request.form.get('proposeeName')
+        message = request.form.get('message')
+        photo = request.files.get('photo')
+
+        if not proposer_name or not proposee_name or not message:
+            return "Please fill in all required fields!", 400
+
+        photo_path = None
+        if photo and photo.filename != '':
+            photo_filename = secure_filename(photo.filename)
+            full_path = os.path.join("/tmp", photo_filename)  # Use /tmp for Vercel
+            photo.save(full_path)
+            photo_path = f"uploads/{photo_filename}"  # Just logical, won't work on Vercel
+
+        query = "INSERT INTO proposals (proposer_name, proposee_name, message, photo_path) VALUES (%s, %s, %s, %s)"
+        values = (proposer_name, proposee_name, message, photo_path)
+        cursor.execute(query, values)
+        db.commit()
+
+        return redirect(url_for('thank_you', proposer_name=proposer_name))
+
+    except Exception as e:
+        print("🔥 ERROR in /submit:", e)
+        return f"Internal Server Error: {str(e)}", 500
+
     proposer_name = request.form.get('proposerName')
     proposee_name = request.form.get('proposeeName')
     message = request.form.get('message')
