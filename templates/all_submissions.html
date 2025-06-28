@@ -52,12 +52,12 @@
         <td>{{ proposee }}</td>
         <td>{{ message }}</td>
         <td>
-          <!-- {% if photo %}
+          {% if photo %}
             <img src="{{ url_for('static', filename=photo.replace('static/', '')) }}" alt="Photo">
           {% else %}
             No Photo
-          {% endif %} -->
-          <img src="{{ photo }}" alt="">
+          {% endif %}
+          <!-- <img src="{{ photo }}" alt=""> -->
         </td>
       </tr>
       {% endfor %}
