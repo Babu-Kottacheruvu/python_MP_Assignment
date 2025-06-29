@@ -1,18 +1,25 @@
 from flask import Flask, render_template, request, redirect, url_for
+import cloudinary
+import cloudinary.uploader
 import mysql.connector
 import os
-from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
-app.config['UPLOAD_FOLDER'] = 'static/uploads'
 
-# MySQL connection
+# Cloudinary credentials (REPLACE THESE)
+cloudinary.config(
+    cloud_name="your_cloud_name",
+    api_key="your_api_key",
+    api_secret="your_api_secret"
+)
+
+# MySQL credentials (REPLACE THESE)
 db = mysql.connector.connect(
-    host=os.environ['DB_HOST'],
-    user=os.environ['DB_USER'],
-    password=os.environ['DB_PASSWORD'],
-    database=os.environ['DB_NAME'],
-    port=int(os.environ.get('DB_PORT', 3306))
+    host="your_mysql_host",
+    user="your_mysql_user",
+    password="your_mysql_password",
+    database="your_db_name",
+    port=3306  # Change if your MySQL host uses another port
 )
 cursor = db.cursor()
 
@@ -23,7 +30,7 @@ CREATE TABLE IF NOT EXISTS proposals (
     proposer_name VARCHAR(100),
     proposee_name VARCHAR(100),
     message TEXT,
-    photo_path VARCHAR(255)
+    photo_url TEXT
 )
 """)
 
@@ -46,49 +53,23 @@ def submit():
         if not proposer_name or not proposee_name or not message:
             return "Please fill in all required fields!", 400
 
-        photo_path = None
-        if photo and photo.filename != '':
-            photo_filename = secure_filename(photo.filename)
-            full_path = os.path.join("/tmp", photo_filename)  # Use /tmp for Vercel
-            photo.save(full_path)
-            photo_path = f"uploads/{photo_filename}"  # Just logical, won't work on Vercel
+        # Upload to Cloudinary
+        photo_url = None
+        if photo:
+            upload_result = cloudinary.uploader.upload(photo)
+            photo_url = upload_result.get('secure_url')
 
-        query = "INSERT INTO proposals (proposer_name, proposee_name, message, photo_path) VALUES (%s, %s, %s, %s)"
-        values = (proposer_name, proposee_name, message, photo_path)
+        # Insert into MySQL
+        query = "INSERT INTO proposals (proposer_name, proposee_name, message, photo_url) VALUES (%s, %s, %s, %s)"
+        values = (proposer_name, proposee_name, message, photo_url)
         cursor.execute(query, values)
         db.commit()
 
-        return redirect(url_for('thank_you', proposer_name=proposer_name))
+        return render_template("thankyou.html", proposer_name=proposer_name, photo_url=photo_url)
 
     except Exception as e:
-        print("🔥 ERROR in /submit:", e)
+        print("Error in /submit:", e)
         return f"Internal Server Error: {str(e)}", 500
-
-    # proposer_name = request.form.get('proposerName')
-    # proposee_name = request.form.get('proposeeName')
-    # message = request.form.get('message')
-    # photo = request.files.get('photo')
-
-    # if not proposer_name or not proposee_name or not message:
-    #     return "Please fill in all required fields!", 400
-
-    # # Handle photo upload - FIXED VERSION
-    # photo_path = None
-    # if photo and photo.filename != '':
-    #     photo_filename = secure_filename(photo.filename)
-    #     # Save file to disk
-    #     full_path = os.path.join(app.config['UPLOAD_FOLDER'], photo_filename)
-    #     photo.save(full_path)
-    #     # Store only the relative path for the database (uploads/filename.jpg)
-    #     photo_path = f"uploads/{photo_filename}"
-
-    # # Insert into database
-    # query = "INSERT INTO proposals (proposer_name, proposee_name, message, photo_path) VALUES (%s, %s, %s, %s)"
-    # values = (proposer_name, proposee_name, message, photo_path)
-    # cursor.execute(query, values)
-    # db.commit()
-
-    # return redirect(url_for('thank_you', proposer_name=proposer_name))
 
 @app.route('/thank-you')
 def thank_you():
@@ -102,17 +83,16 @@ def view_proposal():
         if not proposal_id.isdigit():
             return "Invalid ID", 400
 
-        cursor.execute("SELECT proposer_name, proposee_name, message, photo_path FROM proposals WHERE id = %s", (proposal_id,))
+        cursor.execute("SELECT proposer_name, proposee_name, message, photo_url FROM proposals WHERE id = %s", (proposal_id,))
         result = cursor.fetchone()
 
         if result:
-            proposer_name, proposee_name, message, photo_path = result
+            proposer_name, proposee_name, message, photo_url = result
             return render_template('view.html', id=proposal_id, proposer=proposer_name,
-                                   proposee=proposee_name, message=message, photo=photo_path)
+                                   proposee=proposee_name, message=message, photo_url=photo_url)
         else:
             return f"No proposal found with ID {proposal_id}", 404
     return render_template('view_form.html')
-
 
 @app.route('/submissions')
 def all_submissions():
@@ -120,7 +100,5 @@ def all_submissions():
     proposals = cursor.fetchall()
     return render_template('all_submissions.html', proposals=proposals)
 
-
 if __name__ == '__main__':
-    os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
     app.run(debug=True)
