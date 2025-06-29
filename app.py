@@ -6,7 +6,6 @@ import os
 
 app = Flask(__name__)
 
-# Cloudinary credentials (REPLACE THESE)
 cloudinary.config(
     cloud_name="dne1bro85",
     api_key="517532446814286",
