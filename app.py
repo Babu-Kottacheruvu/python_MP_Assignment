@@ -13,13 +13,12 @@ cloudinary.config(
     api_secret="your_api_secret"
 )
 
-# MySQL credentials (REPLACE THESE)
 db = mysql.connector.connect(
-    host="your_mysql_host",
-    user="your_mysql_user",
-    password="your_mysql_password",
-    database="your_db_name",
-    port=3306  # Change if your MySQL host uses another port
+    host=os.environ['DB_HOST'],
+    user=os.environ['DB_USER'],
+    password=os.environ['DB_PASSWORD'],
+    database=os.environ['DB_NAME'],
+    port=int(os.environ.get('DB_PORT', 3306))
 )
 cursor = db.cursor()
 
