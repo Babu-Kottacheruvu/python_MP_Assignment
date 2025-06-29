@@ -8,9 +8,9 @@ app = Flask(__name__)
 
 # Cloudinary credentials (REPLACE THESE)
 cloudinary.config(
-    cloud_name="your_cloud_name",
-    api_key="your_api_key",
-    api_secret="your_api_secret"
+    cloud_name="dne1bro85",
+    api_key="517532446814286",
+    api_secret="clFK95-4gNTjThGMKUYhM4DF6n4"
 )
 
 db = mysql.connector.connect(
