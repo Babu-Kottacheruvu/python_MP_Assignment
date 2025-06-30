@@ -1,8 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for
 import cloudinary
 import cloudinary.uploader
-import pymysql
-# import mysql.connector
+import mysql.connector
 import os
 
 app = Flask(__name__)
@@ -14,20 +13,13 @@ cloudinary.config(
 )
 
 
-db = pymysql.connect(
+db = mysql.connector.connect(
     host=os.environ['DB_HOST'],
     user=os.environ['DB_USER'],
     password=os.environ['DB_PASSWORD'],
     database=os.environ['DB_NAME'],
     port=int(os.environ.get('DB_PORT', 3306))
 )
-# db = mysql.connector.connect(
-#     host=os.environ['DB_HOST'],
-#     user=os.environ['DB_USER'],
-#     password=os.environ['DB_PASSWORD'],
-#     database=os.environ['DB_NAME'],
-#     port=int(os.environ.get('DB_PORT', 3306))
-# )
 cursor = db.cursor()
 
 # Create proposals table if not exists
