@@ -10,14 +10,17 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      height: 100vh;
+      min-height: 100vh;
+      margin: 0;
     }
     form {
       background: white;
       padding: 30px;
       border-radius: 20px;
       box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-      width: 420px;
+      width: 100%;
+      max-width: 420px;
+      box-sizing: border-box;
     }
     h2 {
       text-align: center;
@@ -53,6 +56,28 @@
     }
     button:hover {
       background-color: #8e24aa;
+    }
+    @media (max-width: 600px) {
+      body {
+        padding: 10px;
+        min-height: unset;
+      }
+      form {
+        padding: 18px;
+        border-radius: 12px;
+        max-width: 100vw;
+      }
+      h2 {
+        font-size: 1.3em;
+      }
+      input, textarea {
+        font-size: 14px;
+        padding: 8px;
+      }
+      button {
+        font-size: 15px;
+        padding: 10px;
+      }
     }
   </style>
 </head>
