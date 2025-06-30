@@ -1,17 +1,10 @@
 from flask import Flask, render_template, request, redirect, url_for
-import cloudinary
-import cloudinary.uploader
 import mysql.connector
 import os
 
 app = Flask(__name__)
 
-cloudinary.config(
-    cloud_name="dne1bro85",
-    api_key="517532446814286",
-    api_secret="clFK95-4gNTjThGMKUYhM4DF6n4"
-)
-
+# MySQL database connection
 
 db = mysql.connector.connect(
     host=os.environ['DB_HOST'],
@@ -52,11 +45,13 @@ def submit():
         if not proposer_name or not proposee_name or not message:
             return "Please fill in all required fields!", 400
 
-        # Upload to Cloudinary
+        # Save photo locally if uploaded
         photo_url = None
-        if photo:
-            upload_result = cloudinary.uploader.upload(photo)
-            photo_url = upload_result.get('secure_url')
+        if photo and photo.filename:
+            photo_path = os.path.join('static', 'uploads', photo.filename)
+            os.makedirs(os.path.dirname(photo_path), exist_ok=True)
+            photo.save(photo_path)
+            photo_url = '/' + photo_path.replace('\\', '/')
 
         # Insert into MySQL
         query = "INSERT INTO proposals (proposer_name, proposee_name, message, photo_url) VALUES (%s, %s, %s, %s)"
