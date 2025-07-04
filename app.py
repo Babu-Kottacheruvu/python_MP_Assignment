@@ -66,8 +66,7 @@ def submit():
         # Save photo locally if uploaded
         photo_path = None
         if photo and photo.filename:
-            # photo_path = os.path.join('static', 'uploads', photo.filename)
-            photo_path = os.path.join(photo.filename)
+            photo_path = os.path.join('static', 'uploads', photo.filename)
             os.makedirs(os.path.dirname(photo_path), exist_ok=True)
             photo.save(photo_path)
             photo_path = '/' + photo_path.replace('\\', '/')
