@@ -1,8 +1,26 @@
 from flask import Flask, render_template, request, redirect, url_for
 import mysql.connector
 import os
+from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
+# Configure upload folder
+
+#disable this line while "CLOUDINARY" is enabled
+
+# app.config['UPLOAD_FOLDER'] = 'static/uploads'  
+
+
+#myssql database connection for local development
+# db = mysql.connector.connect(
+#     host="localhost",
+#     user="root",
+#     password="KBABU0307",
+#     database="marriage_proposal",
+#     port=3306  # Default MySQL port, change if necessary
+# )
+
+
 
 # MySQL database connection
 
@@ -22,7 +40,7 @@ CREATE TABLE IF NOT EXISTS proposals (
     proposer_name VARCHAR(100),
     proposee_name VARCHAR(100),
     message TEXT,
-    photo_url TEXT
+    photo_path TEXT
 )
 """)
 
@@ -46,20 +64,30 @@ def submit():
             return "Please fill in all required fields!", 400
 
         # Save photo locally if uploaded
-        photo_url = None
+        photo_path = None
         if photo and photo.filename:
             photo_path = os.path.join('static', 'uploads', photo.filename)
             os.makedirs(os.path.dirname(photo_path), exist_ok=True)
             photo.save(photo_path)
-            photo_url = '/' + photo_path.replace('\\', '/')
+            photo_path = '/' + photo_path.replace('\\', '/')
+        else:
+            photo_path = None
+
+        # photo_filename = ''
+        # if photo and photo.filename != '':
+        #     photo_filename = secure_filename(photo.filename)
+        #     photo_path = os.path.join(app.config['UPLOAD_FOLDER'], photo_filename)
+        #     photo.save(photo_path)
+        # else:
+        #     photo_path = None
 
         # Insert into MySQL
-        query = "INSERT INTO proposals (proposer_name, proposee_name, message, photo_url) VALUES (%s, %s, %s, %s)"
-        values = (proposer_name, proposee_name, message, photo_url)
+        query = "INSERT INTO proposals (proposer_name, proposee_name, message, photo_path) VALUES (%s, %s, %s, %s)"
+        values = (proposer_name, proposee_name, message, photo_path if photo_path else None)
         cursor.execute(query, values)
         db.commit()
 
-        return render_template("thankyou.html", proposer_name=proposer_name, photo_url=photo_url)
+        return render_template("thankyou.html", proposer_name=proposer_name, photo_path=photo_path)
 
     except Exception as e:
         print("Error in /submit:", e)
@@ -77,13 +105,13 @@ def view_proposal():
         if not proposal_id.isdigit():
             return "Invalid ID", 400
 
-        cursor.execute("SELECT proposer_name, proposee_name, message, photo_url FROM proposals WHERE id = %s", (proposal_id,))
+        cursor.execute("SELECT proposer_name, proposee_name, message, photo_path FROM proposals WHERE id = %s", (proposal_id,))
         result = cursor.fetchone()
 
         if result:
-            proposer_name, proposee_name, message, photo_url = result
+            proposer_name, proposee_name, message, photo_path = result
             return render_template('view.html', id=proposal_id, proposer=proposer_name,
-                                   proposee=proposee_name, message=message, photo_url=photo_url)
+                                   proposee=proposee_name, message=message, photo_path=photo_path)
         else:
             return f"No proposal found with ID {proposal_id}", 404
     return render_template('view_form.html')
