@@ -8,7 +8,7 @@ app = Flask(__name__)
 
 #disable this line while "CLOUDINARY" is enabled
 
-# app.config['UPLOAD_FOLDER'] = 'static/uploads'  
+app.config['UPLOAD_FOLDER'] = 'static/uploads'  
 
 
 #myssql database connection for local development
