@@ -73,13 +73,24 @@ def submit():
         # else:
         #     photo_path = None
 
+        # photo_filename = ''
+        # if photo and photo.filename != '':
+        #     photo_filename = secure_filename(photo.filename)
+        #     photo_path = os.path.join(app.config['UPLOAD_FOLDER'], photo_filename)
+        #     photo.save(photo_path)
+        # else:
+        #     photo_path = None
+
         photo_filename = ''
         if photo and photo.filename != '':
             photo_filename = secure_filename(photo.filename)
-            photo_path = os.path.join(app.config['UPLOAD_FOLDER'], photo_filename)
-            photo.save(photo_path)
+            file_save_path = os.path.join(app.config['UPLOAD_FOLDER'], photo_filename)
+            os.makedirs(os.path.dirname(file_save_path), exist_ok=True)
+            photo.save(file_save_path)
+            photo_path = f"/static/uploads/{photo_filename}"  # Save this to DB
         else:
             photo_path = None
+
 
         # Insert into MySQL
         query = "INSERT INTO proposals (proposer_name, proposee_name, message, photo_path) VALUES (%s, %s, %s, %s)"
