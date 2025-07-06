@@ -49,14 +49,14 @@
       <strong>Debug - Photo path from DB:</strong> {{ photo if photo else 'None' }}
     </div>
     
-    {% if photo %}
+    <!-- {% if photo %}
         <div>
             <img src="{{ url_for('static', filename=photo) }}" alt="Proposal Photo" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
             <p style="display:none; color:red;">❌ Image failed to load. Check if file exists at: static/{{ photo }}</p>
         </div>
     {% else %}
         <p><em>No photo attached to this proposal</em></p>
-    {% endif %}    
+    {% endif %}     -->
     <img src="{{ photo }}" alt="">
     <p><a href="{{ url_for('view_proposal') }}">← View Another Proposal</a></p>
   </div>
