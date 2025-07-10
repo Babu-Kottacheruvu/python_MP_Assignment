@@ -88,7 +88,7 @@ def submit():
             os.makedirs(os.path.dirname(file_save_path), exist_ok=True)
             photo.save(file_save_path)
             # photo_path = f"/static/uploads/{photo_filename}"  # Save this to DB
-            photo_path = f"https://yourdomain.vercel.app/static/uploads/{photo_filename}"
+            photo_path = f"https://forever-begins.vercel.app/static/uploads/{photo_filename}"
 
         else:
             photo_path = None
