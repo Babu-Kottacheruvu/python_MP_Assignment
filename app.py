@@ -84,9 +84,9 @@ def submit():
         photo_filename = ''
         if photo and photo.filename != '':
             photo_filename = secure_filename(photo.filename)
-            file_save_path = os.path.join(app.config['UPLOAD_FOLDER'], photo_filename)
-            os.makedirs(os.path.dirname(file_save_path), exist_ok=True)
-            photo.save(file_save_path)
+            # file_save_path = os.path.join(app.config['UPLOAD_FOLDER'], photo_filename)
+            # os.makedirs(os.path.dirname(file_save_path), exist_ok=True)
+            # photo.save(file_save_path)
             # photo_path = f"/static/uploads/{photo_filename}"  # Save this to DB
             photo_path = f"https://forever-begins.vercel.app/static/uploads/{photo_filename}"
 
